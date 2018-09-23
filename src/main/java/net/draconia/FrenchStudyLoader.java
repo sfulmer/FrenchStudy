@@ -38,8 +38,8 @@ public class FrenchStudyLoader
 		objBuilder.add(objConsole);
 		
 		AppenderComponentBuilder objRollingFile = objBuilder.newAppender("rolling", "RollingFile");
-		objRollingFile.addAttribute("fileName", "MediaLibrary.log");
-		objRollingFile.addAttribute("filePattern", "medialibrary-%d{MM-dd-yy}.log.gz");
+		objRollingFile.addAttribute("fileName", "FrenchStudy.log");
+		objRollingFile.addAttribute("filePattern", "FrenchStudy-%d{MM-dd-yy}.log.gz");
 		objRollingFile.addComponent(objTriggeringPolicies);
 		
 		objBuilder.add(objRollingFile);
