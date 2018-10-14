@@ -1,11 +1,18 @@
 package net.draconia.frenchstudy.model;
 
-import java.util.Observable;
+import java.io.Serializable;
 
-public class Word extends Observable
+import net.draconia.utilities.PropertyChangeable;
+
+public class Word extends PropertyChangeable implements Serializable
 {
+	private static final long serialVersionUID = 191393811589856766L;
+	
 	private Integer miId;
 	private String msEnglish;
+	
+	public Word()
+	{ }
 	
 	public Word(final int iId)
 	{
@@ -41,23 +48,25 @@ public class Word extends Observable
 	
 	public void setEnglish(final String sEnglish)
 	{
+		String sOldEnglish = getEnglish();
+		
 		if(sEnglish == null)
 			msEnglish = "";
 		else
 			msEnglish = sEnglish;
 		
-		setChanged();
-		notifyObservers();
+		firePropertyChangeListeners("English", sOldEnglish, getEnglish());
 	}
 	
 	public void setId(final Integer iId)
 	{
+		Integer iOldId = getId();
+		
 		if(iId == null)
 			miId = 0;
 		else
 			miId = iId;
 		
-		setChanged();
-		notifyObservers();
+		firePropertyChangeListeners("Id", iOldId, getId());
 	}
 }

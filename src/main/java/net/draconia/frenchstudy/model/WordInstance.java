@@ -2,12 +2,12 @@ package net.draconia.frenchstudy.model;
 
 import java.io.Serializable;
 
-import java.util.Observable;
-
 import net.draconia.frenchstudy.NoPartOfSpeechBoundException;
 import net.draconia.frenchstudy.NoWordBoundException;
 
-public class WordInstance extends Observable implements Serializable
+import net.draconia.utilities.PropertyChangeable;
+
+public class WordInstance extends PropertyChangeable implements Serializable
 {
 	private static final long serialVersionUID = 508352573636136087L;
 	
@@ -121,64 +121,70 @@ public class WordInstance extends Observable implements Serializable
 	
 	public void setCategory(final Category objCategory)
 	{
+		Category objOldCategory = getCategory();
+		
 		mObjCategory = objCategory;
 		
-		setChanged();
-		notifyObservers();
+		firePropertyChangeListeners("Category", objOldCategory, getCategory());
 	}
 	
 	public void setDefinition(final String sDefinition)
 	{
+		String sOldDefinition = getDefinition();
+		
 		if(sDefinition == null)
 			msDefinition = "";
 		else
 			msDefinition = sDefinition;
 		
-		setChanged();
-		notifyObservers();
+		firePropertyChangeListeners("Definition", sOldDefinition, getDefinition());
 	}
 	
 	public void setId(final Integer iId)
 	{
+		Integer iOldId = getId();
+		
 		if((iId == null) || (iId < 0))
 			miId = 0;
 		else
 			miId = iId;
 		
-		setChanged();
-		notifyObservers();
+		firePropertyChangeListeners("Id", iOldId, getId());
 	}
 	
 	public void setPartOfSpeech(final PartOfSpeech objPartOfSpeech) throws NoPartOfSpeechBoundException
 	{
+		PartOfSpeech objOldPartOFSpeech = getPartOfSpeech();
+		
 		if(objPartOfSpeech == null)
 			throw new NoPartOfSpeechBoundException();
 		else
 			mObjPartOfSpeech = objPartOfSpeech;
 		
-		setChanged();
-		notifyObservers();
+		firePropertyChangeListeners("PartOfSpeech", objOldPartOFSpeech, getPartOfSpeech());
 	}
 	
 	public void setSlang(final Boolean bSlang)
 	{
+		Boolean bOldSlang = isSlang();
+		
 		if(bSlang == null)
 			mbSlang = false;
 		else
 			mbSlang = bSlang;
 		
-		setChanged();
-		notifyObservers();
+		firePropertyChangeListeners("Slang", bOldSlang, isSlang());
 	}
 	
 	public void setWord(final Word objWord) throws NoWordBoundException
 	{
+		Word objOldWord = getWord();
+		
 		if(objWord == null)
 			throw new NoWordBoundException();
 		else
 			mObjWord = objWord;
 		
-		setChanged();
-		notifyObservers();
+		firePropertyChangeListeners("Word", objOldWord, getWord());
 	}
 }

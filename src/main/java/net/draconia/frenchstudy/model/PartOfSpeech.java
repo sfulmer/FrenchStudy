@@ -2,9 +2,9 @@ package net.draconia.frenchstudy.model;
 
 import java.io.Serializable;
 
-import java.util.Observable;
+import net.draconia.utilities.PropertyChangeable;
 
-public class PartOfSpeech extends Observable implements Serializable
+public class PartOfSpeech extends PropertyChangeable implements Serializable
 {
 	private static final long serialVersionUID = -6078393935088298959L;
 	
@@ -48,23 +48,25 @@ public class PartOfSpeech extends Observable implements Serializable
 	
 	public void setId(final Integer iId)
 	{
+		Integer iOldId = getId();
+		
 		if((iId == null) || (iId < 0))
 			miId = 0;
 		else
 			miId = iId;
 		
-		setChanged();
-		notifyObservers();
+		firePropertyChangeListeners("Id", iOldId, getId());
 	}
 	
 	public void setPartOfSpeech(final String sPartOfSpeech)
 	{
+		String sOldPartOfSpeech = getPartOfSpeech();
+		
 		if(sPartOfSpeech == null)
 			msPartOfSpeech = "";
 		else
 			msPartOfSpeech = sPartOfSpeech;
 		
-		setChanged();
-		notifyObservers();
+		firePropertyChangeListeners("PartOfSpeech", sOldPartOfSpeech, getPartOfSpeech());
 	}
 }

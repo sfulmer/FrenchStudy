@@ -2,11 +2,13 @@ package net.draconia.frenchstudy.model;
 
 import java.io.Serializable;
 
-import java.util.Observable;
+import net.draconia.utilities.PropertyChangeable;
 
-public class Category extends Observable implements Serializable
+public class Category extends PropertyChangeable implements Serializable
 {
 	private static final long serialVersionUID = 5281400324476454101L;
+	
+	public static final Category EMPTY_CATEGORY = new Category(); 
 	
 	private Integer miId;
 	private String msCategory;
@@ -48,24 +50,26 @@ public class Category extends Observable implements Serializable
 	
 	public void setCategory(final String sCategory)
 	{
+		String sOldCategory = getCategory();
+		
 		if(sCategory == null)
 			msCategory = "";
 		else
 			msCategory = sCategory;
 		
-		setChanged();
-		notifyObservers();
+		firePropertyChangeListeners("Category", sOldCategory, getCategory());
 	}
 	
 	public void setId(final Integer iId)
 	{
+		Integer iOldId = getId();
+		
 		if((iId == null) || (iId < 0))
 			miId = 0;
 		else
 			miId = iId;
 		
-		setChanged();
-		notifyObservers();
+		firePropertyChangeListeners("Id", iOldId, getId());
 	}
 	
 	public String toString()

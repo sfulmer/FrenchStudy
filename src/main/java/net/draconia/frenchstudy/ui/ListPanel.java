@@ -9,7 +9,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import org.springframework.beans.factory.annotation.Autowired;
-
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -18,6 +18,7 @@ public class ListPanel extends JPanel
 	private static final long serialVersionUID = -5634692433905903319L;
 	
 	@Autowired
+	@Qualifier("lblWords")
 	private JLabel mLblWords;
 	@Autowired
 	private JScrollPane mScrWords;

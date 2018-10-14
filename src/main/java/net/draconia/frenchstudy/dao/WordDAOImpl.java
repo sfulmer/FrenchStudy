@@ -14,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Repository;
 
+import net.draconia.frenchstudy.model.Category;
+import net.draconia.frenchstudy.model.PartOfSpeech;
 import net.draconia.frenchstudy.model.Word;
 
 @Repository("WordDAO")
@@ -175,6 +177,225 @@ public class WordDAOImpl extends AbstractDAO<Word> implements WordDAO
 		try
 			{
 			PreparedStatement objStatement = getConnection().prepareStatement("select " + getQueriedColumnsForSelect() + " from Words;");
+			
+			return(createObjectListFromResults(objStatement.executeQuery()));
+			}
+		catch(SQLException objException)
+			{
+			msObjLogger.error("Error creating list of all Words...", objException);
+			
+			return(null);
+			}
+		finally
+			{
+			closeConnection();
+			}
+	}
+	
+	public List<Word> listByCategory(final Category objCategory) throws SQLException
+	{
+		if(!isTableExists())
+			createTable();
+		
+		try
+			{
+			PreparedStatement objStatement;
+			String sSQL = "select " + getQueriedColumnsForSelect() + " from Words inner join WordInstances on WordInstances.Word = Words.Id amd WordInstances.Category ";
+
+			if(objCategory == Category.EMPTY_CATEGORY)
+				sSQL += " is null;";
+			else
+				sSQL += " = ?";
+			
+			objStatement = getConnection().prepareStatement(sSQL);
+			
+			if(objCategory != Category.EMPTY_CATEGORY)
+				objStatement.setInt(1, objCategory.getId());
+					
+			return(createObjectListFromResults(objStatement.executeQuery()));
+			}
+		catch(SQLException objException)
+			{
+			msObjLogger.error("Error creating list of all Words...", objException);
+			
+			return(null);
+			}
+		finally
+			{
+			closeConnection();
+			}
+	}
+	
+	public List<Word> listByPartOfSpeech(final PartOfSpeech objPartOfSpeech) throws SQLException
+	{
+		if(!isTableExists())
+			createTable();
+		
+		try
+			{
+			PreparedStatement objStatement = getConnection().prepareStatement("select " + getQueriedColumnsForSelect() + " from Words inner join WordInstances on WordInstances.Word = Words.Id and WordInstances.PartOfSpeech = ?;");
+
+			objStatement.setInt(1, objPartOfSpeech.getId());
+			
+			return(createObjectListFromResults(objStatement.executeQuery()));
+			}
+		catch(SQLException objException)
+			{
+			msObjLogger.error("Error creating list of all Words...", objException);
+			
+			return(null);
+			}
+		finally
+			{
+			closeConnection();
+			}
+	}
+	
+	public List<Word> listBySlang(final boolean bSlang) throws SQLException
+	{
+		if(!isTableExists())
+			createTable();
+		
+		try
+			{
+			PreparedStatement objStatement = getConnection().prepareStatement("select " + getQueriedColumnsForSelect() + " from Words inner join WordInstances on WordInstances.Word = Words.Id and WordInstances.Slang = ?;");
+
+			objStatement.setBoolean(1, bSlang);
+			
+			return(createObjectListFromResults(objStatement.executeQuery()));
+			}
+		catch(SQLException objException)
+			{
+			msObjLogger.error("Error creating list of all Words...", objException);
+			
+			return(null);
+			}
+		finally
+			{
+			closeConnection();
+			}
+	}
+	
+	public List<Word> listByCategoryAndPartOfSpeech(final Category objCategory, PartOfSpeech objPartOfSpeech) throws SQLException
+	{
+		if(!isTableExists())
+			createTable();
+		
+		try
+			{
+			PreparedStatement objStatement;
+			String sSQL = "select " + getQueriedColumnsForSelect() + " from Words inner join WordInstances on WordInstances.Word = Words.Id and WordInstances.PartOfSpeech = ? and WordInstances.Category ";
+			
+			if(objCategory == Category.EMPTY_CATEGORY)
+				sSQL += "is null;";
+			else
+				sSQL += "= ?;";
+			
+			objStatement = getConnection().prepareStatement(sSQL);
+			
+			objStatement.setInt(1, objPartOfSpeech.getId());
+			
+			if(objCategory != Category.EMPTY_CATEGORY)
+				objStatement.setInt(2, objCategory.getId());
+			
+			return(createObjectListFromResults(objStatement.executeQuery()));
+			}
+		catch(SQLException objException)
+			{
+			msObjLogger.error("Error creating list of all Words...", objException);
+			
+			return(null);
+			}
+		finally
+			{
+			closeConnection();
+			}
+	}
+	
+	public List<Word> listByCategoryAndSlang(final Category objCategory, final boolean bSlang) throws SQLException
+	{
+		if(!isTableExists())
+			createTable();
+		
+		try
+			{
+			PreparedStatement objStatement;
+			String sSQL = "select " + getQueriedColumnsForSelect() + " from Words inner join WordInstances on WordInstances.Word = Words.Id and WordInstances.Slang = ? and WordInstances.Category ";
+			
+			if(objCategory == Category.EMPTY_CATEGORY)
+				sSQL += "is null;";
+			else
+				sSQL += "= ?;";
+			
+			objStatement = getConnection().prepareStatement(sSQL);
+			
+			objStatement.setBoolean(1, bSlang);
+			
+			if(objCategory != Category.EMPTY_CATEGORY)
+				objStatement.setInt(2, objCategory.getId());
+			
+			return(createObjectListFromResults(objStatement.executeQuery()));
+			}
+		catch(SQLException objException)
+			{
+			msObjLogger.error("Error creating list of all Words...", objException);
+			
+			return(null);
+			}
+		finally
+			{
+			closeConnection();
+			}
+	}
+	
+	public List<Word> listByPartOfSpeechAndSlang(final PartOfSpeech objPartOfSpeech, final boolean bSlang) throws SQLException
+	{
+		if(!isTableExists())
+			createTable();
+		
+		try
+			{
+			PreparedStatement objStatement = getConnection().prepareStatement("select " + getQueriedColumnsForSelect() + " from Words inner join WordInstances on WordInstances.Word = Words.Id and WordInstances.Slang = ? and WordInstances.PartOfSpeech = ?;");
+			
+			objStatement.setBoolean(1, bSlang);
+			objStatement.setInt(2, objPartOfSpeech.getId());
+			
+			return(createObjectListFromResults(objStatement.executeQuery()));
+			}
+		catch(SQLException objException)
+			{
+			msObjLogger.error("Error creating list of all Words...", objException);
+			
+			return(null);
+			}
+		finally
+			{
+			closeConnection();
+			}
+	}
+	
+	public List<Word> listByPartOfSpeechCategoryAndSlang(final PartOfSpeech objPartOfSpeech, final Category objCategory, final boolean bSlang) throws SQLException
+	{
+		if(!isTableExists())
+			createTable();
+		
+		try
+			{
+			PreparedStatement objStatement;
+			String sSQL = "select " + getQueriedColumnsForSelect() + " from Words inner join WordInstances on WordInstances.Word = Words.Id and WordInstances.Slang = ? and WordInstances.PartOfSpeech = ? amd WordInstances.Category ";
+			
+			if(objCategory == Category.EMPTY_CATEGORY)
+				sSQL += "is null;";
+			else
+				sSQL += "= ?;";
+			
+			objStatement = getConnection().prepareStatement(sSQL);
+			
+			objStatement.setBoolean(1, bSlang);
+			objStatement.setInt(2, objPartOfSpeech.getId());
+			
+			if(objCategory != Category.EMPTY_CATEGORY)
+				objStatement.setInt(3, objCategory.getId());
 			
 			return(createObjectListFromResults(objStatement.executeQuery()));
 			}

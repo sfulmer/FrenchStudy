@@ -1,8 +1,12 @@
 package net.draconia.frenchstudy;
 
+import java.awt.FlowLayout;
 import java.awt.Font;
+
 import java.awt.event.KeyEvent;
+
 import java.io.Serializable;
+
 import java.util.Properties;
 
 import javax.sql.DataSource;
@@ -13,8 +17,10 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+import javax.swing.JTextField;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -24,13 +30,19 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 import net.draconia.ApplicationContextProvider;
+
 import net.draconia.frenchstudy.model.Word;
+
 import net.draconia.frenchstudy.ui.DetailsPanel;
 import net.draconia.frenchstudy.ui.ListPanel;
+
 import net.draconia.frenchstudy.ui.actions.EditAction;
 import net.draconia.frenchstudy.ui.actions.ExitAction;
 import net.draconia.frenchstudy.ui.actions.NewAction;
 import net.draconia.frenchstudy.ui.actions.RemoveAction;
+
+import net.draconia.frenchstudy.ui.listeners.WordListSelectionListener;
+
 import net.draconia.frenchstudy.ui.model.WordsListModel;
 
 @Configuration
@@ -43,12 +55,14 @@ public class BeanConfiguration implements Serializable
 	private DataSource mObjDataSource;
 	private Font mFntDefault;
 	private JButton mBtnEdit, mBtnNew, mBtnRemove;
-	private JLabel mLblWords;
+	private JLabel mLblEnglishWord, mLblWords;
 	private JList<Word> mLstWords;
 	private JMenu mMnuFile;
 	private JMenuBar mMnuBar;
+	private JPanel mPnlEnglishWord;
 	private JScrollPane mScrWords;
 	private JSplitPane mPnlSplit;
+	private JTextField mTxtEnglishWord;
 	
 	protected ApplicationContext getApplicationContext()
 	{
@@ -127,6 +141,50 @@ public class BeanConfiguration implements Serializable
 			}
 		
 		return(mBtnEdit);
+	}
+	
+	@Bean("txtEnglishWord")
+	public JTextField getEnglishWordField()
+	{
+		if(mTxtEnglishWord == null)
+			{
+			mTxtEnglishWord = new JTextField(30);
+			
+			mTxtEnglishWord.setBorder(BorderFactory.createLoweredBevelBorder());
+			mTxtEnglishWord.setEnabled(false);
+			mTxtEnglishWord.setFont(getDefaultFont());
+			}
+		
+		return(mTxtEnglishWord);
+	}
+	
+	@Bean("lblEnglishWord")
+	public JLabel getEnglishWordLabel()
+	{
+		if(mLblEnglishWord == null)
+			{
+			mLblEnglishWord = new JLabel("English:");
+			
+			mLblEnglishWord.setDisplayedMnemonic(KeyEvent.VK_E);
+			mLblEnglishWord.setLabelFor(getEnglishWordField());
+			mLblEnglishWord.setOpaque(false);
+			}
+		
+		return(mLblEnglishWord);
+	}
+	
+	@Bean("pnlEnglishWord")
+	public JPanel getEnglishWordPanel()
+	{
+		if(mPnlEnglishWord == null)
+			{
+			mPnlEnglishWord = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
+			
+			mPnlEnglishWord.add(getEnglishWordLabel());
+			mPnlEnglishWord.add(getEnglishWordField());
+			}
+		
+		return(mPnlEnglishWord);
 	}
 	
 	protected Action getExitAction()
@@ -237,6 +295,8 @@ public class BeanConfiguration implements Serializable
 			
 			mLstWords.setBorder(BorderFactory.createLoweredBevelBorder());
 			mLstWords.setFont(getDefaultFont());
+			
+			mLstWords.addListSelectionListener((WordListSelectionListener)(getBean(WordListSelectionListener.class)));
 			}
 		
 		return(mLstWords);
