@@ -17,6 +17,7 @@ import org.apache.logging.log4j.core.config.builder.api.ConfigurationBuilder;
 import org.apache.logging.log4j.core.config.builder.api.ConfigurationBuilderFactory;
 
 import org.apache.logging.log4j.core.config.builder.impl.BuiltConfiguration;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,7 +62,7 @@ public class FrenchStudy implements Runnable, Serializable
 		Configurator.initialize(objBuilder.build());
 	}
 	
-	protected static ApplicationContext getApplicationContext()
+	public static ApplicationContext getApplicationContext()
 	{
 		if(mObjApplicationContext == null)
 			{

@@ -21,6 +21,7 @@ public class ListPanel extends JPanel
 	@Qualifier("lblWords")
 	private JLabel mLblWords;
 	@Autowired
+	@Qualifier("scrWords")
 	private JScrollPane mScrWords;
 	@Autowired
 	private ListPanelButtonPanel mPnlButtons;

@@ -2,14 +2,17 @@ package net.draconia.frenchstudy.model;
 
 import java.io.Serializable;
 
-import net.draconia.frenchstudy.NoPartOfSpeechBoundException;
-import net.draconia.frenchstudy.NoWordBoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import net.draconia.frenchstudy.exceptions.NoPartOfSpeechBoundException;
+import net.draconia.frenchstudy.exceptions.NoWordBoundException;
 import net.draconia.utilities.PropertyChangeable;
 
-public class WordInstance extends PropertyChangeable implements Serializable
+public class WordInstance extends PropertyChangeable implements Cloneable, Serializable
 {
 	private static final long serialVersionUID = 508352573636136087L;
+	private Logger msObjLogger = LoggerFactory.getLogger(WordInstance.class);
 	
 	private Boolean mbSlang;
 	private Category mObjCategory;
@@ -18,12 +21,22 @@ public class WordInstance extends PropertyChangeable implements Serializable
 	private String msDefinition;
 	private Word mObjWord;
 	
-	public WordInstance()
-	{ }
-	
-	public WordInstance(final int iId)
+	public WordInstance() throws NoPartOfSpeechBoundException, NoWordBoundException
 	{
+		setPartOfSpeech(new PartOfSpeech());
+		setWord(new Word());
+	}
+	
+	public WordInstance(final int iId) throws NoPartOfSpeechBoundException, NoWordBoundException 
+	{
+		this();
+		
 		setId(iId);
+	}
+	
+	public WordInstance(final Word objWord) throws NoPartOfSpeechBoundException, NoWordBoundException
+	{
+		this(objWord, new PartOfSpeech());
 	}
 	
 	public WordInstance(final Word objWord, final PartOfSpeech objPartOfSpeech) throws NoPartOfSpeechBoundException, NoWordBoundException 
@@ -72,6 +85,61 @@ public class WordInstance extends PropertyChangeable implements Serializable
 		this(objWord, objPartOfSpeech, objCategory, sDefinition, bSlang);
 		
 		setId(iId);
+	}
+	
+	public Object clone()
+	{
+		try
+			{
+			Boolean bNewSlang = null;
+			Category objNewCategory = null;
+			Integer iNewId = null;
+			PartOfSpeech objNewPartOfSpeech = null;
+			Word objNewWord = null;
+			
+			try
+				{
+				bNewSlang = Boolean.valueOf(isSlang());
+				}
+			catch(NullPointerException objException)
+				{ }
+			
+			try
+				{
+				objNewCategory = (Category)(getCategory().clone());
+				}
+			catch(NullPointerException objException)
+				{ }
+			
+			try
+				{
+				iNewId = Integer.valueOf(getId());
+				}
+			catch(NullPointerException objException)
+				{ }
+			
+			try
+				{
+				objNewPartOfSpeech = (PartOfSpeech)(getPartOfSpeech().clone());
+				}
+			catch(NullPointerException objException)
+				{ }
+			
+			try
+				{
+				objNewWord = (Word)(getWord().clone());
+				}
+			catch(NullPointerException objException)
+				{ }
+			
+			return(new WordInstance(iNewId, objNewWord, objNewPartOfSpeech, objNewCategory, bNewSlang));
+			}
+		catch(NoPartOfSpeechBoundException | NoWordBoundException objException)
+			{
+			msObjLogger.error("Failed to clone Word Instance...", objException);
+			
+			return(null);
+			}
 	}
 	
 	public Category getCategory()
@@ -154,7 +222,17 @@ public class WordInstance extends PropertyChangeable implements Serializable
 	
 	public void setPartOfSpeech(final PartOfSpeech objPartOfSpeech) throws NoPartOfSpeechBoundException
 	{
-		PartOfSpeech objOldPartOFSpeech = getPartOfSpeech();
+		PartOfSpeech objOldPartOFSpeech = null;
+		
+		try
+			{
+			objOldPartOFSpeech = getPartOfSpeech();
+			}
+		catch(NoPartOfSpeechBoundException objException)
+			{
+			// Do nothing - Sweep under the rug because if first time set
+			// then this is normal!
+			}
 		
 		if(objPartOfSpeech == null)
 			throw new NoPartOfSpeechBoundException();
@@ -178,7 +256,17 @@ public class WordInstance extends PropertyChangeable implements Serializable
 	
 	public void setWord(final Word objWord) throws NoWordBoundException
 	{
-		Word objOldWord = getWord();
+		Word objOldWord = null;
+		
+		try
+			{
+			objOldWord = getWord();
+			}
+		catch(NoWordBoundException objException)
+			{
+			// DO nothing - Sweep under the rug because if setting 
+			// for the first time, this is normal!
+			}
 		
 		if(objWord == null)
 			throw new NoWordBoundException();

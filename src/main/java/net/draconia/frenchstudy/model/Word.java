@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 import net.draconia.utilities.PropertyChangeable;
 
-public class Word extends PropertyChangeable implements Serializable
+public class Word extends PropertyChangeable implements Cloneable, Serializable
 {
 	private static final long serialVersionUID = 191393811589856766L;
 	
@@ -28,6 +28,11 @@ public class Word extends PropertyChangeable implements Serializable
 	{
 		setId(iId);
 		setEnglish(sEnglish);
+	}
+	
+	public Object clone()
+	{
+		return(new Word(Integer.valueOf(getId()), new String(getEnglish())));
 	}
 	
 	public String getEnglish()

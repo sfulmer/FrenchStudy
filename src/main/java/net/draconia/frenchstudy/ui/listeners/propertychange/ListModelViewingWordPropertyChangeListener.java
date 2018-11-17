@@ -1,4 +1,4 @@
-package net.draconia.frenchstudy.ui.listeners;
+package net.draconia.frenchstudy.ui.listeners.propertychange;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;

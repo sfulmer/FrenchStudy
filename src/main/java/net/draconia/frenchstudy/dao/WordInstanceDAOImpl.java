@@ -1,9 +1,11 @@
 package net.draconia.frenchstudy.dao;
 
 import java.sql.PreparedStatement;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,8 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Repository;
 
-import net.draconia.frenchstudy.NoPartOfSpeechBoundException;
-import net.draconia.frenchstudy.NoWordBoundException;
+import net.draconia.frenchstudy.exceptions.NoPartOfSpeechBoundException;
+import net.draconia.frenchstudy.exceptions.NoWordBoundException;
 import net.draconia.frenchstudy.model.Category;
 import net.draconia.frenchstudy.model.PartOfSpeech;
 import net.draconia.frenchstudy.model.Word;
@@ -230,6 +232,31 @@ public class WordInstanceDAOImpl extends AbstractDAO<WordInstance> implements Wo
 			PreparedStatement objStatement = getConnection().prepareStatement("select " + getQueriedColumnsForSelect() + " from " + TableName + ";");
 		
 			return(createObjectListFromResults(objStatement.executeQuery()));
+			}
+		finally
+			{
+			closeConnection();
+			}
+	}
+	
+	public List<WordInstance> listByWord(final Word objWord) throws SQLException
+	{
+		if(!isTableExists())
+			createTable();
+		
+		try
+			{
+			PreparedStatement objStatement = getConnection().prepareStatement("select " + getQueriedColumnsForSelect() + " from " + TableName + " where Word = ?");
+			
+			objStatement.setInt(1, objWord.getId());
+			
+			return(createObjectListFromResults(objStatement.executeQuery()));
+			}
+		catch(SQLException objException)
+			{
+			msObjLogger.error("Error getting Word Instances by Word(Id = " + objWord.getId() + ")...", objException);
+			
+			return(null);
 			}
 		finally
 			{

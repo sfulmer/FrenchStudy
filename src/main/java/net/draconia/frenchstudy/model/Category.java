@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 import net.draconia.utilities.PropertyChangeable;
 
-public class Category extends PropertyChangeable implements Serializable
+public class Category extends PropertyChangeable implements Cloneable, Serializable
 {
 	private static final long serialVersionUID = 5281400324476454101L;
 	
@@ -30,6 +30,11 @@ public class Category extends PropertyChangeable implements Serializable
 	{
 		setId(iId);
 		setCategory(sCategory);
+	}
+	
+	public Object clone()
+	{
+		return(new Category(Integer.valueOf(getId()), new String(getCategory())));
 	}
 	
 	public String getCategory()

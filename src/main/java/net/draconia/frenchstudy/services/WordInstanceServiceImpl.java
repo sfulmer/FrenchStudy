@@ -37,6 +37,11 @@ public class WordInstanceServiceImpl implements WordInstanceService
 		return(getWordInstanceDAO().list());
 	}
 	
+	public List<WordInstance> listByWord(final Word objWord) throws SQLException
+	{
+		return(getWordInstanceDAO().listByWord(objWord));
+	}
+	
 	public List<WordInstance> listByWordAndPartOfSpeech(final Word objWord, final PartOfSpeech objPartOfSpeech) throws SQLException
 	{
 		return(getWordInstanceDAO().listByWordAndPartOfSpeech(objWord, objPartOfSpeech));

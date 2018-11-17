@@ -16,7 +16,7 @@ import net.draconia.frenchstudy.model.PartOfSpeech;
 import net.draconia.frenchstudy.model.Word;
 
 import net.draconia.frenchstudy.ui.controllers.ListPanelController;
-import net.draconia.frenchstudy.ui.listeners.ListModelViewingWordPropertyChangeListener;
+import net.draconia.frenchstudy.ui.listeners.propertychange.ListModelViewingWordPropertyChangeListener;
 import net.draconia.utilities.PropertyChangeable;
 
 import org.slf4j.Logger;

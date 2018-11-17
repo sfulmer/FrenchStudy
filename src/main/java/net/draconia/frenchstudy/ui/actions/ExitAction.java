@@ -35,7 +35,10 @@ public class ExitAction extends AbstractAction
 	public void actionPerformed(final ActionEvent objActionEvent)
 	{
 		if(JOptionPane.showConfirmDialog(getMainWindow(), "Are you sure you wish to exit?", "Are you sure?", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE) == JOptionPane.YES_OPTION)
+			{
 			getMainWindow().dispose();
+			System.exit(0);
+			}
 	}
 	
 	protected Window getMainWindow()

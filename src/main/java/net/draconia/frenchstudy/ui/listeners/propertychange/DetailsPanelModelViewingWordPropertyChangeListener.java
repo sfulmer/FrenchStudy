@@ -1,4 +1,4 @@
-package net.draconia.frenchstudy.ui.listeners;
+package net.draconia.frenchstudy.ui.listeners.propertychange;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -30,14 +30,17 @@ public class DetailsPanelModelViewingWordPropertyChangeListener implements Prope
 	
 	public void propertyChange(final PropertyChangeEvent objPropertyChangeEvent)
 	{
-		Word objWord = ((Word)(objPropertyChangeEvent.getNewValue()));
-		
-		if(objWord != null)
+		if(objPropertyChangeEvent.getPropertyName().equalsIgnoreCase("ViewingWord"))
 			{
-			if(!getEnglishWordField().getText().equals(objWord.getEnglish()))
-				getEnglishWordField().setText(objWord.getEnglish());
+			Word objWord = ((Word)(objPropertyChangeEvent.getNewValue()));
+			
+			if(objWord != null)
+				{
+				if(!getEnglishWordField().getText().equals(objWord.getEnglish()))
+					getEnglishWordField().setText(objWord.getEnglish());
+				}
+			else
+				getEnglishWordField().setText("");
 			}
-		else
-			getEnglishWordField().setText("");
 	}
 }

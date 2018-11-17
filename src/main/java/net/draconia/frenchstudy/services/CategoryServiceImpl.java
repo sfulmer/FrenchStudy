@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Service;
 
-@Service("CategoryService")
+@Service("categoryService")
 public class CategoryServiceImpl implements CategoryService
 {
 	private static final long serialVersionUID = -2315192354584454522L;

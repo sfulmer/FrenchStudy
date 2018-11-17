@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 import net.draconia.utilities.PropertyChangeable;
 
-public class PartOfSpeech extends PropertyChangeable implements Serializable
+public class PartOfSpeech extends PropertyChangeable implements Cloneable, Serializable
 {
 	private static final long serialVersionUID = -6078393935088298959L;
 	
@@ -28,6 +28,29 @@ public class PartOfSpeech extends PropertyChangeable implements Serializable
 	{
 		setId(iId);
 		setPartOfSpeech(sPartOfSpeech);
+	}
+	
+	public Object clone()
+	{
+		return(new PartOfSpeech(Integer.valueOf(getId()), new String(getPartOfSpeech())));
+	}
+	
+	public boolean equals(final Object objOther)
+	{
+		if(objOther instanceof PartOfSpeech)
+			{
+			boolean bPOSEqual;
+			PartOfSpeech objPOS = ((PartOfSpeech)(objOther));
+			
+			bPOSEqual = getPartOfSpeech().equals(objPOS.getPartOfSpeech());
+			
+			if(bPOSEqual)
+				return(Integer.valueOf(getId()).equals(objPOS.getId()));
+			else
+				return(false);
+			}
+		else
+			return(false);
 	}
 	
 	public int getId()
@@ -68,5 +91,10 @@ public class PartOfSpeech extends PropertyChangeable implements Serializable
 			msPartOfSpeech = sPartOfSpeech;
 		
 		firePropertyChangeListeners("PartOfSpeech", sOldPartOfSpeech, getPartOfSpeech());
+	}
+	
+	public String toString()
+	{
+		return(getPartOfSpeech());
 	}
 }

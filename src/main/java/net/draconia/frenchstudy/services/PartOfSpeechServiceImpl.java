@@ -12,7 +12,7 @@ import net.draconia.frenchstudy.dao.PartOfSpeechDAO;
 
 import net.draconia.frenchstudy.model.PartOfSpeech;
 
-@Service("PartOfSpeechService")
+@Service("partOfSpeechService")
 public class PartOfSpeechServiceImpl implements PartOfSpeechService
 {
 	private static final long serialVersionUID = -4710455528043072107L;
