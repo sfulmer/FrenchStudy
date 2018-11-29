@@ -1,32 +1,50 @@
 package net.draconia.frenchstudy.ui.model;
 
+import java.beans.PropertyChangeListener;
 import java.io.Serializable;
-
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.PostConstruct;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 
 import javax.swing.table.TableModel;
 
+import net.draconia.ApplicationContextProvider;
 import net.draconia.frenchstudy.exceptions.NoPartOfSpeechBoundException;
 import net.draconia.frenchstudy.model.Category;
 import net.draconia.frenchstudy.model.PartOfSpeech;
+import net.draconia.frenchstudy.model.Word;
 import net.draconia.frenchstudy.model.WordInstance;
+import net.draconia.frenchstudy.services.WordInstanceService;
+import net.draconia.frenchstudy.ui.listeners.propertychange.WordInstancesTableModelSelectedRowsPropertyChangeListener;
+import net.draconia.utilities.PropertyChangeable;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 @Component
-public class DetailsPanelWordInstanceTableModel implements Serializable, TableModel
+public class DetailsPanelWordInstanceTableModel extends PropertyChangeable implements Serializable, TableModel
 {
 	private static final long serialVersionUID = -5146089514033897639L;
+	private static final Logger msObjLogger = LoggerFactory.getLogger(DetailsPanelWordInstanceTableModel.class);
 	
+	@Autowired
+	private ApplicationContextProvider mObjApplicationContextProvider;
 	private List<TableModelListener> mLstTableModelListeners;
 	private List<WordInstance> mLstModel;
 	private Map<WordInstance, Boolean> mMapSelected;
+	private Word mObjWordInEffect;
+	
+	@Autowired
+	private WordInstanceService mObjWordInstanceService;
 	
 	public void addTableModelListener(final TableModelListener objTableModelListener)
 	{
@@ -47,6 +65,26 @@ public class DetailsPanelWordInstanceTableModel implements Serializable, TableMo
 	{
 		for(TableModelListener objTableModelListener : getTableModelListeners())
 			objTableModelListener.tableChanged(new TableModelEvent(this));
+	}
+	
+	protected ApplicationContext getApplicationContext()
+	{
+		return(getApplicationContextProvider().getApplicationContext());
+	}
+	
+	protected ApplicationContextProvider getApplicationContextProvider()
+	{
+		return(mObjApplicationContextProvider);
+	}
+	
+	protected Object getBean(final Class<?> clsBean)
+	{
+		return(getApplicationContext().getBean(clsBean));
+	}
+	
+	protected Object getBean(final String sBeanName)
+	{
+		return(getApplicationContext().getBean(sBeanName));
 	}
 	
 	public Class<?> getColumnClass(final int iColumnIndex)
@@ -90,7 +128,19 @@ public class DetailsPanelWordInstanceTableModel implements Serializable, TableMo
 	public List<WordInstance> getModel()
 	{
 		if(mLstModel == null)
-			mLstModel = new ArrayList<WordInstance>();
+			if(getWordInEffect() != null)
+				try
+					{
+					mLstModel = getWordInstanceService().listByWord(getWordInEffect());
+					}
+				catch(SQLException objException)
+					{
+					msObjLogger.error("There was a problem getting the WordInstances for this word(" + getWordInEffect() + ")...", objException);
+					
+					mLstModel = new ArrayList<WordInstance>();
+					}
+			else
+				mLstModel = new ArrayList<WordInstance>();
 		
 		return(mLstModel);
 	}
@@ -106,6 +156,11 @@ public class DetailsPanelWordInstanceTableModel implements Serializable, TableMo
 			mMapSelected = new HashMap<WordInstance, Boolean>();
 		
 		return(mMapSelected);
+	}
+	
+	protected PropertyChangeListener getSelectedRowsPropertyChangeListener()
+	{
+		return((WordInstancesTableModelSelectedRowsPropertyChangeListener)(getBean(WordInstancesTableModelSelectedRowsPropertyChangeListener.class)));
 	}
 	
 	protected List<TableModelListener> getTableModelListeners()
@@ -142,6 +197,22 @@ public class DetailsPanelWordInstanceTableModel implements Serializable, TableMo
 			}
 	}
 	
+	public Word getWordInEffect()
+	{
+		return(mObjWordInEffect);
+	}
+	
+	protected WordInstanceService getWordInstanceService()
+	{
+		return(mObjWordInstanceService);
+	}
+	
+	@PostConstruct
+	protected void init()
+	{
+		addPropertyChangeListener(getSelectedRowsPropertyChangeListener());
+	}
+	
 	public boolean isCellEditable(final int iRowIndex, final int iColumnIndex)
 	{
 		return(iColumnIndex == 3);
@@ -165,6 +236,19 @@ public class DetailsPanelWordInstanceTableModel implements Serializable, TableMo
 	public void setValueAt(final Object objValue, final int iRowIndex, final int iColumnIndex)
 	{
 		if(iColumnIndex == 3)
+			{
 			getSelectedMap().put(getModel().get(iRowIndex), ((Boolean)(objValue)));
+			
+			firePropertyChangeListeners("SelectedRows", null, getSelectedMap());
+			}
+	}
+	
+	public void setWordInEffect(final Word objWordInEffect)
+	{
+		mObjWordInEffect = objWordInEffect;
+		
+		mLstModel = null;
+		
+		fireTableChanged();
 	}
 }

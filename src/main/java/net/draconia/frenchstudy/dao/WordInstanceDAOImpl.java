@@ -18,6 +18,8 @@ import org.springframework.stereotype.Repository;
 
 import net.draconia.frenchstudy.exceptions.NoPartOfSpeechBoundException;
 import net.draconia.frenchstudy.exceptions.NoWordBoundException;
+import net.draconia.frenchstudy.exceptions.RequisiteTableNotExistingException;
+import net.draconia.frenchstudy.exceptions.TableAlreadyExistsException;
 import net.draconia.frenchstudy.model.Category;
 import net.draconia.frenchstudy.model.PartOfSpeech;
 import net.draconia.frenchstudy.model.Word;
@@ -89,15 +91,73 @@ public class WordInstanceDAOImpl extends AbstractDAO<WordInstance> implements Wo
 		return(lstWordInstances);
 	}
 	
-	protected boolean createTable() throws SQLException
+	@SuppressWarnings("unchecked")
+	protected boolean createTable() throws RequisiteTableNotExistingException, SQLException, TableAlreadyExistsException
 	{
 		try
 			{
 			if(!isTableExists())
 				{
-				PreparedStatement objStatement = getConnection().prepareStatement("create table " + TableName + "(Id int auto_increment not null primary key, Word int not null, PartOfSpeech int not null, Category int, Definition varchar(5000) default ' ' not null, Slang boolean default 0 not null, foreign key (Word) references Words(Id), foreign key (PartOfSpeech) references PartsOfSpeech(Id), foreign key (Category) references Categories(Id), unique key(Word, PartOfSpeech, Category, Slang));");
+				boolean bAllSet = true;
+				PreparedStatement objStatement;
+								
+				if(bAllSet)
+					{
+					if(!getTableUtils().isTableExists("Words"))
+						try
+							{
+							bAllSet = (((AbstractDAO<Word>)(getWordDAO())).createTable());
+							}
+						catch(TableAlreadyExistsException objException)
+							{
+							msObjLogger.error("The Words table already exists...", objException);
+							
+							bAllSet = true;
+							}
+					}
+				else
+					throw new RequisiteTableNotExistingException("Words");
 				
-				return(objStatement.executeUpdate() == 1);
+				if(bAllSet)
+					{
+					if(!getTableUtils().isTableExists("PartsOfSpeech"))
+						try
+							{
+							bAllSet = (((AbstractDAO<PartOfSpeech>)(getPartOfSpeechDAO())).createTable());
+							}
+						catch(TableAlreadyExistsException objException)
+							{
+							msObjLogger.error("The Parts Of Speech Table already exists...", objException);
+							
+							bAllSet = true;
+							}
+					}
+				else
+					throw new RequisiteTableNotExistingException("PartOfSpeech");
+				
+				if(bAllSet)
+					{
+					if(!getTableUtils().isTableExists("Categories"))
+						try
+							{
+							bAllSet = (((AbstractDAO<Category>)(getCategoryDAO())).createTable());
+							}
+						catch(TableAlreadyExistsException objException)
+							{
+							msObjLogger.error("The Categories table already exists...", objException);
+							}
+					}
+				else
+					throw new RequisiteTableNotExistingException("Category");
+				
+				if(bAllSet)
+					{
+					objStatement = getConnection().prepareStatement("create table " + TableName + "(Id int auto_increment not null primary key, Word int not null, PartOfSpeech int not null, Category int, Definition varchar(5000) default ' ' not null, Slang boolean default 0 not null, foreign key (Word) references Words(Id), foreign key (PartOfSpeech) references PartsOfSpeech(Id), foreign key (Category) references Categories(Id), unique key(Word, PartOfSpeech, Category, Slang));");
+					
+					return(objStatement.executeUpdate() == 1);
+					}
+				else
+					throw new RequisiteTableNotExistingException();
 				}
 			else
 				throw new TableAlreadyExistsException(TableName);
@@ -116,7 +176,18 @@ public class WordInstanceDAOImpl extends AbstractDAO<WordInstance> implements Wo
 			ResultSet objResults;
 			
 			if(!isTableExists())
-				createTable();
+				try
+					{
+					createTable();
+					}
+				catch(RequisiteTableNotExistingException objException)
+					{
+					msObjLogger.error("A Requisite table was not present to create the Word Instance Table...", objException);
+					}
+				catch(TableAlreadyExistsException objException)
+					{
+					msObjLogger.error("The Word Instances Table already exists...", objException);
+					}
 			
 			objStatement = getConnection().prepareStatement("select " + getQueriedColumnsForSelect() + " from " + TableName + " where Id = ?;");
 			
@@ -225,7 +296,18 @@ public class WordInstanceDAOImpl extends AbstractDAO<WordInstance> implements Wo
 	public List<WordInstance> list() throws SQLException
 	{
 		if(!isTableExists())
-			createTable();
+			try
+				{
+				createTable();
+				}
+			catch(RequisiteTableNotExistingException objException)
+				{
+				msObjLogger.error("A Requisite table was not present to create the Word Instance Table...", objException);
+				}
+			catch(TableAlreadyExistsException objException)
+				{
+				msObjLogger.error("The Word Instances Table already exists...", objException);
+				}
 		
 		try
 			{
@@ -242,7 +324,18 @@ public class WordInstanceDAOImpl extends AbstractDAO<WordInstance> implements Wo
 	public List<WordInstance> listByWord(final Word objWord) throws SQLException
 	{
 		if(!isTableExists())
-			createTable();
+			try
+				{
+				createTable();
+				}
+			catch(RequisiteTableNotExistingException objException)
+				{
+				msObjLogger.error("A Requisite table was not present to create the Word Instance Table...", objException);
+				}
+			catch(TableAlreadyExistsException objException)
+				{
+				msObjLogger.error("The Word Instances Table already exists...", objException);
+				}
 		
 		try
 			{
@@ -267,7 +360,18 @@ public class WordInstanceDAOImpl extends AbstractDAO<WordInstance> implements Wo
 	public List<WordInstance> listByWordAndPartOfSpeech(final Word objWord, final PartOfSpeech objPartOfSpeech) throws SQLException
 	{
 		if(!isTableExists())
-			createTable();
+			try
+				{
+				createTable();
+				}
+			catch(RequisiteTableNotExistingException objException)
+				{
+				msObjLogger.error("A Requisite table was not present to create the Word Instance Table...", objException);
+				}
+			catch(TableAlreadyExistsException objException)
+				{
+				msObjLogger.error("The Word Instances Table already exists...", objException);
+				}
 		
 		try
 			{
@@ -293,7 +397,18 @@ public class WordInstanceDAOImpl extends AbstractDAO<WordInstance> implements Wo
 	public List<WordInstance> listByWordPartOfSpeechAndCategory(final Word objWord, final PartOfSpeech objPartOfSpeech, final Category objCategory) throws SQLException
 	{
 		if(!isTableExists())
-			createTable();
+			try
+				{
+				createTable();
+				}
+			catch(RequisiteTableNotExistingException objException)
+				{
+				msObjLogger.error("A Requisite table was not present to create the Word Instance Table...", objException);
+				}
+			catch(TableAlreadyExistsException objException)
+				{
+				msObjLogger.error("The Word Instances Table already exists...", objException);
+				}
 		
 		try
 			{
@@ -332,7 +447,18 @@ public class WordInstanceDAOImpl extends AbstractDAO<WordInstance> implements Wo
 	public List<WordInstance> listSlang() throws SQLException
 	{
 		if(!isTableExists())
-			createTable();
+			try
+				{
+				createTable();
+				}
+			catch(RequisiteTableNotExistingException objException)
+				{
+				msObjLogger.error("A Requisite table was not present to create the Word Instance Table...", objException);
+				}
+			catch(TableAlreadyExistsException objException)
+				{
+				msObjLogger.error("The Word Instances Table already exists...", objException);
+				}
 		
 		try
 			{
@@ -357,7 +483,18 @@ public class WordInstanceDAOImpl extends AbstractDAO<WordInstance> implements Wo
 	public void remove(final WordInstance objWordInstance) throws SQLException
 	{
 		if(!isTableExists())
-			createTable();
+			try
+				{
+				createTable();
+				}
+			catch(RequisiteTableNotExistingException objException)
+				{
+				msObjLogger.error("A Requisite table was not present to create the Word Instance Table...", objException);
+				}
+			catch(TableAlreadyExistsException objException)
+				{
+				msObjLogger.error("The Word Instances Table already exists...", objException);
+				}
 		
 		try
 			{
@@ -385,7 +522,18 @@ public class WordInstanceDAOImpl extends AbstractDAO<WordInstance> implements Wo
 	public WordInstance save(final WordInstance objWordInstance) throws SQLException
 	{
 		if(!isTableExists())
-			createTable();
+			try
+				{
+				createTable();
+				}
+			catch(RequisiteTableNotExistingException objException)
+				{
+				msObjLogger.error("A Requisite table was not present to create the Word Instance Table...", objException);
+				}
+			catch(TableAlreadyExistsException objException)
+				{
+				msObjLogger.error("The Word Instances Table already exists...", objException);
+				}
 		
 		try
 			{

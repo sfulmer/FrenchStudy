@@ -8,6 +8,7 @@ import java.io.Serializable;
 import javax.swing.JTextField;
 
 import net.draconia.frenchstudy.model.Word;
+import net.draconia.frenchstudy.ui.model.DetailsPanelWordInstanceTableModel;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -23,9 +24,17 @@ public class DetailsPanelModelViewingWordPropertyChangeListener implements Prope
 	@Qualifier("txtEnglishWord")
 	private JTextField mTxtEnglishWord;
 	
+	@Autowired
+	private DetailsPanelWordInstanceTableModel mObjWordInstanceTableModel;
+	
 	protected JTextField getEnglishWordField()
 	{
 		return(mTxtEnglishWord);
+	}
+	
+	protected DetailsPanelWordInstanceTableModel getWordInstanceTableModel()
+	{
+		return(mObjWordInstanceTableModel);
 	}
 	
 	public void propertyChange(final PropertyChangeEvent objPropertyChangeEvent)
@@ -38,9 +47,15 @@ public class DetailsPanelModelViewingWordPropertyChangeListener implements Prope
 				{
 				if(!getEnglishWordField().getText().equals(objWord.getEnglish()))
 					getEnglishWordField().setText(objWord.getEnglish());
+				
+				if(!objWord.equals(getWordInstanceTableModel().getWordInEffect()))
+					getWordInstanceTableModel().setWordInEffect(objWord);
 				}
 			else
+				{
 				getEnglishWordField().setText("");
+				getWordInstanceTableModel().setWordInEffect(null);
+				}
 			}
 	}
 }

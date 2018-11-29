@@ -39,6 +39,10 @@ public class ListPanelModel extends PropertyChangeable implements Serializable
 	private Boolean mbCurrentSlang;
 	private Category mObjCurrentCategory;
 	private List<Word> mLstModel;
+	
+	@Autowired
+	private ListPanelController mObjController;
+	
 	private PartOfSpeech mObjCurrentPartOfSpeech;
 	private Word mObjViewingWord;
 	
@@ -74,12 +78,13 @@ public class ListPanelModel extends PropertyChangeable implements Serializable
 	
 	protected ListPanelController getListPanelController()
 	{
-		return((ListPanelController)(getBean(ListPanelController.class)));
+		return(mObjController);
 	}
 	
 	public List<Word> getModel()
 	{
 		if(mLstModel == null)
+			{
 			try
 				{
 				mLstModel = getListPanelController().list(getCurrentPartOfSpeech(), getCurrentCategory(), isCurrentlySlang());
@@ -90,6 +95,7 @@ public class ListPanelModel extends PropertyChangeable implements Serializable
 				
 				mLstModel = new ArrayList<Word>();
 				}
+			}
 		
 		return(mLstModel);
 	}

@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import net.draconia.frenchstudy.model.Word;
 import net.draconia.frenchstudy.model.WordInstance;
 import net.draconia.frenchstudy.services.WordInstanceService;
+import net.draconia.frenchstudy.ui.model.DetailsPanelModel;
 
 @Component
 public class DetailsPanelController implements Serializable
@@ -21,7 +22,20 @@ public class DetailsPanelController implements Serializable
 	private static final Logger msObjLogger = LoggerFactory.getLogger(DetailsPanelController.class);
 	
 	@Autowired
+	private DetailsPanelModel mObjDetailsPanelModel;	
+	@Autowired
 	private WordInstanceService mObjWordInstanceService;
+	
+	public void edit(final Word objWord)
+	{
+		getDetailsPanelModel().setEditingWord(objWord);
+		getDetailsPanelModel().setEditing(getDetailsPanelModel().getEditingWord() != null);
+	}
+	
+	protected DetailsPanelModel getDetailsPanelModel()
+	{
+		return(mObjDetailsPanelModel);
+	}
 	
 	protected WordInstanceService getWordInstanceService()
 	{
@@ -42,8 +56,9 @@ public class DetailsPanelController implements Serializable
 			}
 	}
 	
-	public Word newWord()
+	public void newWord()
 	{
-		return(new Word());
+		getDetailsPanelModel().setEditingWord(new Word());
+		getDetailsPanelModel().setEditing(getDetailsPanelModel().getEditingWord() != null);
 	}
 }

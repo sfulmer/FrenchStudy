@@ -11,6 +11,7 @@ import javax.swing.event.ListDataListener;
 
 import net.draconia.frenchstudy.model.Word;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -20,6 +21,9 @@ public class WordsListModel implements ListModel<Word>, Serializable
 	
 	private List<ListDataListener> mLstListeners;
 	private List<Word> mLstModel;
+	
+	@Autowired
+	private ListPanelModel mObjListPanelModel;
 	
 	public void addListDataListener(final ListDataListener objListener)
 	{
@@ -34,7 +38,7 @@ public class WordsListModel implements ListModel<Word>, Serializable
 	protected List<Word> getModel()
 	{
 		if(mLstModel == null)
-			mLstModel = new ArrayList<Word>();
+			mLstModel = getListPanelModel().getModel();
 		
 		return(mLstModel);
 	}
@@ -45,6 +49,11 @@ public class WordsListModel implements ListModel<Word>, Serializable
 			mLstListeners = new ArrayList<ListDataListener>();
 		
 		return(mLstListeners);
+	}
+	
+	protected ListPanelModel getListPanelModel()
+	{
+		return(mObjListPanelModel);
 	}
 	
 	public int getSize()

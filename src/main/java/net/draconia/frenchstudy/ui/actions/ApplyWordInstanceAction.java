@@ -2,17 +2,25 @@ package net.draconia.frenchstudy.ui.actions;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+
 import java.sql.SQLException;
 
 import javax.swing.AbstractAction;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import net.draconia.frenchstudy.exceptions.NoPartOfSpeechBoundException;
+import net.draconia.frenchstudy.exceptions.NoWordBoundException;
+import net.draconia.frenchstudy.model.WordInstance;
 
 import net.draconia.frenchstudy.ui.controllers.EditWordInstanceDialogController;
+
 import net.draconia.frenchstudy.ui.model.EditWordInstanceDialogModel;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
+import org.springframework.stereotype.Component;
 
 @Component
 public class ApplyWordInstanceAction extends AbstractAction
@@ -39,14 +47,28 @@ public class ApplyWordInstanceAction extends AbstractAction
 	
 	public void actionPerformed(final ActionEvent objActionEvent)
 	{
+		WordInstance objEditingModel = getModel().getEditingModel(), objOriginalModel = getModel().getOriginalModel();
+		
 		try
 			{
-			getController().save(getModel().getEditingModel());
+			getController().save(objEditingModel);
 			}
 		catch(SQLException objException)
 			{
 			msObjLogger.error("Error Saving/Persisting Word Instance to the database...", objException);
 			}
+		
+		try
+			{
+			objOriginalModel.setCategory(objEditingModel.getCategory());
+			objOriginalModel.setDefinition(objEditingModel.getDefinition());
+			objOriginalModel.setId(objEditingModel.getId());
+			objOriginalModel.setPartOfSpeech(objEditingModel.getPartOfSpeech());
+			objOriginalModel.setSlang(objEditingModel.isSlang());
+			objOriginalModel.setWord(objEditingModel.getWord());
+			}
+		catch(NoPartOfSpeechBoundException | NoWordBoundException objException)
+			{ } // No reason for any exception to be thrown here!
 	}
 	
 	protected EditWordInstanceDialogController getController()

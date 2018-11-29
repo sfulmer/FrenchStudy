@@ -21,12 +21,14 @@ import javax.swing.JList;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
 
 import net.draconia.ApplicationContextProvider;
@@ -34,7 +36,7 @@ import net.draconia.ApplicationContextProvider;
 import net.draconia.frenchstudy.model.Category;
 import net.draconia.frenchstudy.model.PartOfSpeech;
 import net.draconia.frenchstudy.model.Word;
-
+import net.draconia.frenchstudy.ui.CheckBoxHeader;
 import net.draconia.frenchstudy.ui.DetailsPanel;
 import net.draconia.frenchstudy.ui.DetailsPanelEnglishWordPanel;
 import net.draconia.frenchstudy.ui.ListPanel;
@@ -49,7 +51,8 @@ import net.draconia.frenchstudy.ui.actions.NewAction;
 import net.draconia.frenchstudy.ui.actions.RemoveAction;
 import net.draconia.frenchstudy.ui.actions.RemoveWordInstancesAction;
 import net.draconia.frenchstudy.ui.actions.SaveWordInstanceAction;
-
+import net.draconia.frenchstudy.ui.actions.SelectAllWordsAction;
+import net.draconia.frenchstudy.ui.listeners.WordListMouseListener;
 import net.draconia.frenchstudy.ui.listeners.WordListSelectionListener;
 
 import net.draconia.frenchstudy.ui.model.DetailsPanelWordInstanceTableModel;
@@ -84,16 +87,19 @@ public class BeanConfiguration implements Serializable
 	private JCheckBox mChkWordInstnaceSlang;
 	private JComboBox<Category> mCboWordInstanceCategory;
 	private JComboBox<PartOfSpeech> mCboWordInstancePartOfSpeech;
+	private JLabel mLblEditCategoryDialogId, mLblEditCategoryDialogCategory;
 	private JLabel mLblEditPartOfSpeechDialogId, mLblEditPartOfSpeechDialogPartOfSpeech;
 	private JLabel mLblWordInstanceCategory, mLblWordInstanceDefinition, mLblEnglishWord;
 	private JLabel mLblWordInstancePartOfSpeech, mLblWordInstanceWord, mLblWords;
 	private JList<Word> mLstWords;
 	private JMenu mMnuFile;
 	private JMenuBar mMnuBar;
-	private JScrollPane mScrWords, mScrWordInstances;
+	private JPopupMenu mMnuWordsList;
+	private JScrollPane mScrWords, mScrWordInstanceDefinition, mScrWordInstances;
 	private JSplitPane mPnlSplit;
 	private JTable mTblWordInstances;
 	private JTextArea mTxtWordInstanceDefinition;
+	private JTextField mTxtEditCategoryDialogId, mTxtEditCategoryDialogCategory;
 	private JTextField mTxtEditPartOfSpeechDialogId, mTxtEditPartOfSpeechDialogPartOfSpeech;
 	private JTextField mTxtEnglishWord, mTxtWordInstanceWord;
 	
@@ -134,9 +140,10 @@ public class BeanConfiguration implements Serializable
 			((DriverManagerDataSource)(mObjDataSource)).setPassword("R3g1n@ 1$ my Qu3En!");
 			((DriverManagerDataSource)(mObjDataSource)).setUrl("jdbc:mysql://localhost:3306");
 			((DriverManagerDataSource)(mObjDataSource)).setUsername("root");
-			
-			objProperties.setProperty("useSSL", "false");
+
+			objProperties.setProperty("allowPublicKeyRetrieval",  "true");
 			objProperties.setProperty("autoReconnect", "true");
+			objProperties.setProperty("useSSL", "false");
 			
 			((DriverManagerDataSource)(mObjDataSource)).setConnectionProperties(objProperties);
 			}
@@ -174,6 +181,68 @@ public class BeanConfiguration implements Serializable
 			}
 		
 		return(mBtnEdit);
+	}
+	
+	@Bean("txtEditCategoryDialogCategory")
+	public JTextField getEditCategoryDialogCategoryField()
+	{
+		if(mTxtEditCategoryDialogCategory == null)
+			{
+			mTxtEditCategoryDialogCategory = new JTextField(30);
+			
+			mTxtEditCategoryDialogCategory.setBorder(BorderFactory.createLoweredBevelBorder());
+			mTxtEditCategoryDialogCategory.setFont(getDefaultFont());
+			}
+	
+		return(mTxtEditCategoryDialogCategory);
+	}
+	
+	@Bean("lblEditCategoryDialogCategory")
+	public JLabel getEditCategoryDialogCategoryLabel()
+	{
+		if(mLblEditCategoryDialogCategory == null)
+			{
+			mLblEditCategoryDialogCategory = new JLabel("Category:");
+			
+			mLblEditCategoryDialogCategory.setDisplayedMnemonic(KeyEvent.VK_T);
+			mLblEditCategoryDialogCategory.setFont(getDefaultFont());
+			mLblEditCategoryDialogCategory.setLabelFor(getEditCategoryDialogCategoryField());
+			mLblEditCategoryDialogCategory.setOpaque(false);
+			}
+	
+		return(mLblEditCategoryDialogCategory);
+	}
+	
+	@Bean("txtEditCategoryDialogId")
+	public JTextField getEditCategoryDialogIdField()
+	{
+		if(mTxtEditCategoryDialogId == null)
+			{
+			mTxtEditCategoryDialogId = new JTextField(30);
+			
+			mTxtEditCategoryDialogId.setBackground(SystemColor.control);
+			mTxtEditCategoryDialogId.setBorder(BorderFactory.createEmptyBorder());
+			mTxtEditCategoryDialogId.setEditable(false);
+			mTxtEditCategoryDialogId.setFont(getDefaultFont());
+			}
+	
+	return(mTxtEditCategoryDialogId);
+	}
+	
+	@Bean("lblEditCategoryDialogId")
+	public JLabel getEditCategoryDialogIdLabel()
+	{
+		if(mLblEditCategoryDialogId == null)
+			{
+			mLblEditCategoryDialogId = new JLabel("Id:");
+			
+			mLblEditCategoryDialogId.setDisplayedMnemonic(KeyEvent.VK_I);
+			mLblEditCategoryDialogId.setFont(getDefaultFont());
+			mLblEditCategoryDialogId.setLabelFor(getEditCategoryDialogIdField());
+			mLblEditCategoryDialogId.setOpaque(false);
+			}
+		
+		return(mLblEditCategoryDialogId);
 	}
 	
 	@Bean("txtEditPartOfSpeechDialogId")
@@ -391,6 +460,11 @@ public class BeanConfiguration implements Serializable
 		return(mBtnRemove);
 	}
 	
+	protected SelectAllWordsAction getSelectAllWordsAction()
+	{
+		return((SelectAllWordsAction)(getBean(SelectAllWordsAction.class)));
+	}
+	
 	@Bean("pnlSplit")
 	public JSplitPane getSplitPane()
 	{
@@ -459,6 +533,20 @@ public class BeanConfiguration implements Serializable
 			}
 		
 		return(mLblWordInstanceDefinition);
+	}
+	
+	@Bean("scrWordInstanceDefinition")
+	public JScrollPane getWordInstanceDefinitionScrollPane()
+	{
+		if(mScrWordInstanceDefinition == null)
+			{
+			mScrWordInstanceDefinition = new JScrollPane(getWordInstanceDefinitionField(), JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+			
+			mScrWordInstanceDefinition.setBorder(BorderFactory.createLoweredBevelBorder());
+			mScrWordInstanceDefinition.setFont(getDefaultFont());
+			}
+		
+		return(mScrWordInstanceDefinition);
 	}
 	
 	protected WordInstancePartOfSpeechComboBoxModel getWordInstancePartOfSpeechComboBoxModel()
@@ -573,10 +661,22 @@ public class BeanConfiguration implements Serializable
 	{
 		if(mTblWordInstances == null)
 			{
+			DefaultTableCellRenderer objRenderer = new DefaultTableCellRenderer();
+			TableCellRenderer objColumn3Header;
+			
+			objRenderer.setHorizontalAlignment(JLabel.CENTER);
+			
 			mTblWordInstances = new JTable(getWordInstancesTableModel());
 			
 			mTblWordInstances.setBorder(BorderFactory.createLoweredBevelBorder());
 			mTblWordInstances.setFont(getDefaultFont());
+			
+			objColumn3Header = new CheckBoxHeader(mTblWordInstances);
+			((JCheckBox)(objColumn3Header)).setFont(getDefaultFont());
+			mTblWordInstances.getColumnModel().getColumn(3).setHeaderRenderer(objColumn3Header);
+			
+			mTblWordInstances.getColumnModel().getColumn(0).setCellRenderer(objRenderer);
+			mTblWordInstances.getColumnModel().getColumn(1).setCellRenderer(objRenderer);
 			}
 		
 		return(mTblWordInstances);
@@ -642,9 +742,11 @@ public class BeanConfiguration implements Serializable
 			mLstWords = new JList<Word>(getWordsListModel());
 			
 			mLstWords.setBorder(BorderFactory.createLoweredBevelBorder());
+			mLstWords.setComponentPopupMenu(getWordsListPopupMenu());
 			mLstWords.setFont(getDefaultFont());
 			
 			mLstWords.addListSelectionListener((WordListSelectionListener)(getBean(WordListSelectionListener.class)));
+			mLstWords.addMouseListener(getWordListMouseListener());
 			}
 		
 		return(mLstWords);
@@ -653,6 +755,27 @@ public class BeanConfiguration implements Serializable
 	protected WordsListModel getWordsListModel()
 	{
 		return((WordsListModel)(getBean(WordsListModel.class)));
+	}
+	
+	protected WordListMouseListener getWordListMouseListener()
+	{
+		return((WordListMouseListener)(getBean(WordListMouseListener.class)));
+	}
+	
+	protected JPopupMenu getWordsListPopupMenu()
+	{
+		if(mMnuWordsList == null)
+			{
+			mMnuWordsList = new JPopupMenu();
+			
+			mMnuWordsList.add(getNewAction());
+			mMnuWordsList.add(getEditAction());
+			mMnuWordsList.add(getRemoveAction());
+			mMnuWordsList.addSeparator();
+			mMnuWordsList.add(getSelectAllWordsAction());
+			}
+		
+		return(mMnuWordsList);
 	}
 	
 	@Bean("scrWords")

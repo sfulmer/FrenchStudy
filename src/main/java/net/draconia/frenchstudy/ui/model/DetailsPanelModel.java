@@ -159,7 +159,7 @@ public class DetailsPanelModel extends PropertyChangeable
 			
 			try
 				{
-				lstPropertyChangeListeners = ((List<PropertyChangeListener>)(objOldEditingWord.getClass().getMethod("getPropertyChangeListeners",  new Class<?>[0]).invoke(objOldEditingWord, new Object[0])));
+   				lstPropertyChangeListeners = ((List<PropertyChangeListener>)(objOldEditingWord.getClass().getMethod("getPropertyChangeListeners",  new Class<?>[0]).invoke(objOldEditingWord, new Object[0])));
 				}
 			catch(IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException objException)
 				{
@@ -171,16 +171,14 @@ public class DetailsPanelModel extends PropertyChangeable
 				objOldEditingWord.removePropertyChangeListener(objPropertyChangeListener);
 			}
 		
-		if(((getViewingWord() != null) && (!getViewingWord().equals(objEditingWord))) || ((objEditingWord != null) && (!objEditingWord.equals(getViewingWord())))) 
-			{
+		if((objEditingWord != null) && (getViewingWord() != null) && (!getViewingWord().equals(objEditingWord)))
 			setViewingWord(objEditingWord);
-			
-			mObjEditingWord = ((Word)(getViewingWord().clone()));
-			
-			mObjEditingWord.addPropertyChangeListener((WordEnglishPositiveLengthPropertyChangeListener)(getBean(WordEnglishPositiveLengthPropertyChangeListener.class)));
-			
-			firePropertyChangeListeners("EditingWord", objOldEditingWord, getEditingWord());
-			}
+		
+		mObjEditingWord = ((Word)(getViewingWord().clone()));
+		
+		mObjEditingWord.addPropertyChangeListener((WordEnglishPositiveLengthPropertyChangeListener)(getBean(WordEnglishPositiveLengthPropertyChangeListener.class)));
+		
+		firePropertyChangeListeners("EditingWord", objOldEditingWord, getEditingWord());
 	}
 	
 	public void setViewingWord(final Word objViewingWord)
@@ -188,6 +186,9 @@ public class DetailsPanelModel extends PropertyChangeable
 		Word objOldViewingWord = getViewingWord();
 		
 		mObjViewingWord = objViewingWord;
+		
+		if(mObjViewingWord == null)
+			setEditing(false);
 		
 		firePropertyChangeListeners("ViewingWord", objOldViewingWord, getViewingWord());
 	}

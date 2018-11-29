@@ -29,12 +29,12 @@ public class WordInstanceCategoryComboBoxModel implements ComboBoxModel<Category
 	private static final long serialVersionUID = 2509351721137099113L;
 	private static final Logger msObjLogger = LoggerFactory.getLogger(WordInstanceCategoryComboBoxModel.class);
 
+	@Autowired
+	private EditWordInstanceDialogController mObjController;
+	
 	private Integer miSelectedIndex;
 	private List<ListDataListener> mLstListDataListeners;
 	private List<Category> mLstModel;
-	
-	@Autowired
-	private EditWordInstanceDialogController mObjDialogController;
 	
 	public void addListDataListener(final ListDataListener objListDataListener)
 	{
@@ -49,7 +49,7 @@ public class WordInstanceCategoryComboBoxModel implements ComboBoxModel<Category
 	
 	protected EditWordInstanceDialogController getDialogController()
 	{
-		return(mObjDialogController);
+		return(mObjController);
 	}
 	
 	public Category getElementAt(final int iIndex)
@@ -126,17 +126,17 @@ public class WordInstanceCategoryComboBoxModel implements ComboBoxModel<Category
 		fireContentsChanged();
 	}
 	
-	public void setSelectedItem(final Object objPartOfSpeech)
+	public void setSelectedItem(final Object objCategory)
 	{
-		if(objPartOfSpeech == null)
+		if(objCategory == null)
 			setSelectedIndex(null);
-		else if(objPartOfSpeech instanceof Category)
+		else if(objCategory instanceof Category)
 			{
-			int iIndex = getModel().indexOf(objPartOfSpeech);
-			Category objPOS = ((Category)(objPartOfSpeech));
+			int iIndex = getModel().indexOf(objCategory);
+			Category objCategoryReal = ((Category)(objCategory));
 			
 			if(iIndex == -1)
-				if(objPOS.getCategory().equals("Add..."))
+				if(objCategoryReal.getCategory().equals("Add..."))
 					setSelectedIndex(0);
 				else
 					setSelectedIndex(-1);

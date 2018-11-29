@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
 import javax.swing.AbstractAction;
+import javax.swing.JOptionPane;
 
 import net.draconia.frenchstudy.ui.EditWordInstanceDialog;
 
@@ -30,7 +31,8 @@ public class CancelWordInstanceAction extends AbstractAction
 	
 	public void actionPerformed(final ActionEvent objActionEvent)
 	{
-		getEditWordInstanceDialog().dispose();
+		if(JOptionPane.showConfirmDialog(getEditWordInstanceDialog(), "Are you sure?", "Cancel Word Instance Editing?", JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE) == JOptionPane.YES_OPTION)
+			getEditWordInstanceDialog().dispose();
 	}
 	
 	protected EditWordInstanceDialog getEditWordInstanceDialog()

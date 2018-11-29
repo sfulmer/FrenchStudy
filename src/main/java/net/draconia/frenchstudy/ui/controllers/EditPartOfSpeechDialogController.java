@@ -17,7 +17,7 @@ import net.draconia.frenchstudy.services.PartOfSpeechService;
 import net.draconia.frenchstudy.ui.EditPartOfSpeechDialog;
 
 import net.draconia.frenchstudy.ui.actions.EditPartOfSpeechDialogApply;
-import net.draconia.frenchstudy.ui.actions.EditPartOfSpeechDialogCancel;
+import net.draconia.frenchstudy.ui.actions.DialogCancel;
 import net.draconia.frenchstudy.ui.actions.EditPartOfSpeechDialogSave;
 
 import net.draconia.frenchstudy.ui.model.EditPartOfSpeechDialogModel;
@@ -86,7 +86,7 @@ public class EditPartOfSpeechDialogController implements Serializable
 	public Action getCancelAction()
 	{
 		if(mActCancel == null)
-			mActCancel = new EditPartOfSpeechDialogCancel(getDialog());
+			mActCancel = new DialogCancel(getDialog());
 		
 		return(mActCancel);
 	}

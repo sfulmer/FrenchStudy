@@ -8,6 +8,9 @@ import java.sql.SQLException;
 
 import java.util.List;
 
+import net.draconia.frenchstudy.exceptions.RequisiteTableNotExistingException;
+import net.draconia.frenchstudy.exceptions.TableAlreadyExistsException;
+
 public abstract class AbstractDAO<T> implements Serializable
 {
 	private static final long serialVersionUID = 1668823887267845327L;
@@ -30,7 +33,7 @@ public abstract class AbstractDAO<T> implements Serializable
 	protected abstract T createObjectFromResults(final ResultSet objResults) throws SQLException;
 	protected abstract List<T> createObjectListFromResults(final ResultSet objResults) throws SQLException;
 	
-	protected abstract boolean createTable() throws SQLException;
+	protected abstract boolean createTable() throws RequisiteTableNotExistingException, SQLException, TableAlreadyExistsException;
 	
 	protected Connection getConnection() throws SQLException
 	{

@@ -1,4 +1,4 @@
-package net.draconia.frenchstudy.dao;
+package net.draconia.frenchstudy.exceptions;
 
 import java.io.Serializable;
  

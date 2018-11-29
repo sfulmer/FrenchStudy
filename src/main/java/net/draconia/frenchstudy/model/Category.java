@@ -37,6 +37,24 @@ public class Category extends PropertyChangeable implements Cloneable, Serializa
 		return(new Category(Integer.valueOf(getId()), new String(getCategory())));
 	}
 	
+	public boolean equals(final Object objOther)
+	{
+		if(objOther instanceof Category)
+			{
+			boolean bCategoryEqual;
+			Category objCategory = ((Category)(objOther));
+			
+			bCategoryEqual = getCategory().equals(objCategory.getCategory());
+			
+			if(bCategoryEqual)
+				return(Integer.valueOf(getId()).equals(objCategory.getId()));
+			else
+				return(false);
+			}
+		else
+			return(false);
+	}
+	
 	public String getCategory()
 	{
 		if(msCategory == null)

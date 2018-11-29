@@ -74,4 +74,9 @@ public class Word extends PropertyChangeable implements Cloneable, Serializable
 		
 		firePropertyChangeListeners("Id", iOldId, getId());
 	}
+	
+	public String toString()
+	{
+		return(getEnglish());
+	}
 }

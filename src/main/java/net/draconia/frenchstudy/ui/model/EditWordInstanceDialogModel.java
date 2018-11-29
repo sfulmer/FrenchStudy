@@ -12,6 +12,7 @@ import net.draconia.frenchstudy.exceptions.NoWordBoundException;
 import net.draconia.frenchstudy.model.WordInstance;
 import net.draconia.frenchstudy.ui.listeners.propertychange.EditWordInstanceDialogEditingModelDirtyPropertyChangeListener;
 import net.draconia.frenchstudy.ui.listeners.propertychange.EditWordInstanceDialogEditingModelPropertyChangeListener;
+import net.draconia.frenchstudy.ui.listeners.propertychange.EditWordInstanceDialogSaveablePropertyChangeListener;
 import net.draconia.utilities.PropertyChangeable;
 
 import org.slf4j.LoggerFactory;
@@ -72,6 +73,11 @@ public class EditWordInstanceDialogModel extends PropertyChangeable implements P
 		return((EditWordInstanceDialogEditingModelPropertyChangeListener)(getBean(EditWordInstanceDialogEditingModelPropertyChangeListener.class)));
 	}
 	
+	protected EditWordInstanceDialogSaveablePropertyChangeListener getEditingWordSaveablePropertyChangeListener()
+	{
+		return((EditWordInstanceDialogSaveablePropertyChangeListener)(getBean(EditWordInstanceDialogSaveablePropertyChangeListener.class)));
+	}
+	
 	public WordInstance getOriginalModel()
 	{
 		if(mObjOriginalModel == null)
@@ -92,6 +98,7 @@ public class EditWordInstanceDialogModel extends PropertyChangeable implements P
 	{
 		addPropertyChangeListener(getEditingWordPropertyChangeListener());
 		addPropertyChangeListener(getEditingWordDirtyPropertyChangeListener());
+		addPropertyChangeListener(getEditingWordSaveablePropertyChangeListener());
 	}
 	
 	public boolean isDirty()
@@ -99,9 +106,22 @@ public class EditWordInstanceDialogModel extends PropertyChangeable implements P
 		return(!getOriginalModel().equals(getEditingModel()));
 	}
 	
+	public boolean isSaveable()
+	{
+		try
+			{
+			return(getEditingModel().getPartOfSpeech().getId() > 0);
+			}
+		catch(NoPartOfSpeechBoundException objException)
+			{
+			return(false);
+			}
+	}
+	
 	public void propertyChange(final PropertyChangeEvent objPropertyChangeEvent)
 	{
 		firePropertyChangeListeners("Dirty", null, isDirty());
+		firePropertyChangeListeners("Saveable", null, isSaveable());
 	}
 	
 	public void setEditingModel(final WordInstance objModel)
@@ -111,6 +131,8 @@ public class EditWordInstanceDialogModel extends PropertyChangeable implements P
 			WordInstance objOldValue = getEditingModel();
 			
 			mObjEditingModel = objModel;
+			
+			mObjEditingModel.addPropertyChangeListener(this);
 			
 			firePropertyChangeListeners("EditingModel", objOldValue, getEditingModel());
 			}

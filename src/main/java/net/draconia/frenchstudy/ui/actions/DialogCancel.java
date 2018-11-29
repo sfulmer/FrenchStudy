@@ -4,21 +4,20 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
 import javax.swing.AbstractAction;
+import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 
-import net.draconia.frenchstudy.ui.EditPartOfSpeechDialog;
-
-public class EditPartOfSpeechDialogCancel extends AbstractAction
+public class DialogCancel extends AbstractAction
 {
 	private static final long serialVersionUID = 3368301149287168433L;
 	
-	private EditPartOfSpeechDialog mDlgEditPartOfSpeech;
+	private JDialog mDlgToClose;
 	
-	public EditPartOfSpeechDialogCancel(final EditPartOfSpeechDialog dlgEditPartOfSpeech)
+	public DialogCancel(final JDialog dlgToClose)
 	{
 		super("Cancel");
 		
-		setDialog(dlgEditPartOfSpeech);
+		setDialog(dlgToClose);
 		
 		putValue(LONG_DESCRIPTION, "Closes the window without saving...");
 		putValue(MNEMONIC_KEY, KeyEvent.VK_C);
@@ -30,13 +29,13 @@ public class EditPartOfSpeechDialogCancel extends AbstractAction
 			getDialog().dispose();
 	}
 	
-	protected EditPartOfSpeechDialog getDialog()
+	protected JDialog getDialog()
 	{
-		return(mDlgEditPartOfSpeech);
+		return(mDlgToClose);
 	}
 	
-	protected void setDialog(final EditPartOfSpeechDialog dlgEditPartOfSpeech)
+	protected void setDialog(final JDialog dlgToClose)
 	{
-		mDlgEditPartOfSpeech = dlgEditPartOfSpeech;
+		mDlgToClose = dlgToClose;
 	}
 }

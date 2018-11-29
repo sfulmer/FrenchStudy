@@ -11,7 +11,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import javax.swing.JComboBox;
-import javax.swing.JOptionPane;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,8 +58,6 @@ public class EditWordInstanceComboBoxListener<T> implements ActionListener, Seri
 							funcSetter.setAccessible(true);
 						
 						funcSetter.invoke(getModel(), new Object[] {objSelected});
-						
-						JOptionPane.showMessageDialog(null, "set" + sFieldName + "() called with the object(" + objSelected + ")...", "Success!!", JOptionPane.INFORMATION_MESSAGE);
 						}
 					catch(NoSuchMethodException objException)
 						{

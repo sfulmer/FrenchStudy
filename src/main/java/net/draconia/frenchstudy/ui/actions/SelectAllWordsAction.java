@@ -3,8 +3,6 @@ package net.draconia.frenchstudy.ui.actions;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
-import javax.annotation.PostConstruct;
-
 import javax.swing.AbstractAction;
 import javax.swing.JList;
 
@@ -12,34 +10,31 @@ import net.draconia.ApplicationContextProvider;
 
 import net.draconia.frenchstudy.model.Word;
 
-import net.draconia.frenchstudy.ui.controllers.DetailsPanelController;
-
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.context.ApplicationContext;
-
 import org.springframework.stereotype.Component;
 
 @Component
-public class EditAction extends AbstractAction
+public class SelectAllWordsAction extends AbstractAction
 {
-	private static final long serialVersionUID = 3099384366640740397L;
+	private static final long serialVersionUID = -7460169343716499317L;
 	
 	@Autowired
 	private ApplicationContextProvider mObjApplicationContextProvider;
-	@Autowired
-	private DetailsPanelController mObjDetailsPanelController;
 	
-	public EditAction()
+	public SelectAllWordsAction()
 	{
-		super("Edit");
+		super("Select All");
 		
-		putValue(MNEMONIC_KEY, KeyEvent.VK_E);
+		putValue(LONG_DESCRIPTION, "Selects all Words in the List");
+		putValue(MNEMONIC_KEY, KeyEvent.VK_A);
+		putValue(SHORT_DESCRIPTION, "Selects all Words in the List");
 	}
 	
 	public void actionPerformed(final ActionEvent objActionEvent)
 	{
-		getDetailsPanelController().edit(getWordList().getSelectedValue());
+		getWordsList().clearSelection();
+		getWordsList().addSelectionInterval(0, getWordsList().getModel().getSize() - 1);
 	}
 	
 	protected ApplicationContext getApplicationContext()
@@ -62,20 +57,9 @@ public class EditAction extends AbstractAction
 		return(getApplicationContext().getBean(sBeanName));
 	}
 	
-	protected DetailsPanelController getDetailsPanelController()
-	{
-		return(mObjDetailsPanelController);
-	}
-	
 	@SuppressWarnings("unchecked")
-	protected JList<Word> getWordList()
+	protected JList<Word> getWordsList()
 	{
 		return((JList<Word>)(getBean("lstWords")));
-	}
-	
-	@PostConstruct
-	protected void init()
-	{
-		setEnabled(false);
 	}
 }

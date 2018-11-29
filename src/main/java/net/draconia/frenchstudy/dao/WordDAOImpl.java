@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Repository;
 
+import net.draconia.frenchstudy.exceptions.TableAlreadyExistsException;
 import net.draconia.frenchstudy.model.Category;
 import net.draconia.frenchstudy.model.PartOfSpeech;
 import net.draconia.frenchstudy.model.Word;

@@ -19,7 +19,7 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRootPane;
-import javax.swing.JTextArea;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 
@@ -79,7 +79,8 @@ public class EditWordInstanceDialog extends JDialog
 	@Qualifier("lblWordInstanceWord")
 	private JLabel mLblWord;
 	@Autowired
-	private JTextArea mTxtDefinition;
+	@Qualifier("scrWordInstanceDefinition")
+	private JScrollPane mScrDefinition;
 	@Autowired
 	@Qualifier("txtWordInstanceWord")
 	private JTextField mTxtWord;
@@ -134,9 +135,9 @@ public class EditWordInstanceDialog extends JDialog
 		return(mLblCategory);
 	}
 	
-	protected JTextArea getDefinitionField()
+	protected JScrollPane getDefinitionScrollPane()
 	{
-		return(mTxtDefinition);
+		return(mScrDefinition);
 	}
 	
 	protected JLabel getDefinitionLabel()
@@ -209,12 +210,17 @@ public class EditWordInstanceDialog extends JDialog
 		
 		objConstraints.gridy++;
 		objConstraints.gridx = 0;
+		objConstraints.insets = new Insets(5, 5, 2, 5);
 		add(getDefinitionLabel(), objConstraints);
 		
 		objConstraints.gridy++;
-		add(getDefinitionField(), objConstraints);
+		objConstraints.insets = new Insets(2, 5, 5, 5);
+		objConstraints.ipady = 25;
+		add(getDefinitionScrollPane(), objConstraints);
 		
 		objConstraints.gridy++;
+		objConstraints.insets = new Insets(5, 5, 5, 5);
+		objConstraints.ipady = 0;
 		add(getButtonPanel(), objConstraints);
 	}
 	
